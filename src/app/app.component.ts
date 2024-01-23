@@ -1,14 +1,26 @@
-import { Component } from '@angular/core';
-import { RouterModule } from '@angular/router';
-import { NxWelcomeComponent } from './nx-welcome.component';
+import { Component, inject } from '@angular/core';
+import { MessageService } from './services/abstract-message.service';
+import { FalsoMessageService } from './services/falso-message.service';
+import { AsyncPipe } from '@angular/common';
 
 @Component({
   standalone: true,
-  imports: [NxWelcomeComponent, RouterModule],
   selector: 'dependency-inversion-root',
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.scss',
+  providers: [
+    {
+      provide: MessageService,
+      useClass: FalsoMessageService,
+    },
+  ],
+  imports: [AsyncPipe],
+  template: `
+    <p>
+      {{ $message | async }}
+    </p>
+  `,
 })
 export class AppComponent {
-  title = 'dependency-inversion';
+  
+  $message = inject(MessageService).getMessage()
+
 }
